@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const ASSET_BASE_URL = import.meta.env.BASE_URL;
 const BACKGROUND_VIDEO_URL = `${ASSET_BASE_URL}bg-no-rabbit.mp4`;
+const BACKGROUND_POSTER_URL = `${ASSET_BASE_URL}bg-poster.jpg`;
 const LOGO_URL = `${ASSET_BASE_URL}logo500.png`;
 const RABBIT_SPRITE_URL = `${ASSET_BASE_URL}rabbit-eye-sprite.png?v=30fps-continuous-04-3`;
 
@@ -73,7 +74,12 @@ function getFrameFromLocalDirection(dx: number, dy: number) {
   return DIRECTION_FRAMES.center;
 }
 
-function getControlZoneFrame(event: MouseEvent, rect: DOMRect) {
+type PointerPosition = {
+  clientX: number;
+  clientY: number;
+};
+
+function getControlZoneFrame(event: PointerPosition, rect: DOMRect) {
   const centerX = rect.left + rect.width * CONTROL_ZONE.centerX;
   const centerY = rect.top + rect.height * CONTROL_ZONE.centerY;
   const radius = Math.min(rect.width, rect.height) * CONTROL_ZONE.radius;
@@ -153,7 +159,7 @@ function Navbar() {
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isOpen}
           onClick={() => setIsOpen((open) => !open)}
-          className="inline-flex h-9 w-9 items-center justify-center text-gray-900 focus:outline-none md:hidden"
+          className={`inline-flex h-9 w-9 items-center justify-center focus:outline-none md:hidden ${isOpen ? 'text-gray-900' : 'text-white'}`}
         >
           {isOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -186,6 +192,7 @@ function Navbar() {
 }
 
 function App() {
+  const backgroundVideoRef = useRef<HTMLVideoElement | null>(null);
   const rabbitSpriteRef = useRef<HTMLDivElement | null>(null);
   const scrubRef = useRef<ScrubState>({
     targetFrame: DIRECTION_FRAMES.center,
@@ -193,6 +200,54 @@ function App() {
     lastRenderedFrame: -1,
     frameId: 0,
   });
+
+  useEffect(() => {
+    const video = backgroundVideoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    const playVideo = () => {
+      const playPromise = video.play();
+
+      if (playPromise) {
+        playPromise.catch(() => undefined);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        playVideo();
+      }
+    };
+
+    if (video.readyState >= 2) {
+      playVideo();
+    } else {
+      video.addEventListener('loadeddata', playVideo, { once: true });
+      video.addEventListener('canplay', playVideo, { once: true });
+    }
+
+    window.addEventListener('pointerdown', playVideo, { passive: true });
+    window.addEventListener('touchstart', playVideo, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      video.removeEventListener('loadeddata', playVideo);
+      video.removeEventListener('canplay', playVideo);
+      window.removeEventListener('pointerdown', playVideo);
+      window.removeEventListener('touchstart', playVideo);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     const sprite = rabbitSpriteRef.current;
@@ -203,11 +258,19 @@ function App() {
 
     const scrub = scrubRef.current;
 
-    const handleMouseMove = (event: MouseEvent) => {
+    const handlePointerMove = (event: PointerEvent) => {
       scrub.targetFrame = getControlZoneFrame(event, sprite.getBoundingClientRect());
     };
 
-    const handleMouseLeave = () => {
+    const handleTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0];
+
+      if (touch) {
+        scrub.targetFrame = getControlZoneFrame(touch, sprite.getBoundingClientRect());
+      }
+    };
+
+    const handlePointerLeave = () => {
       scrub.targetFrame = DIRECTION_FRAMES.center;
     };
 
@@ -224,32 +287,37 @@ function App() {
       scrub.frameId = window.requestAnimationFrame(animate);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('mouseleave', handlePointerLeave);
     sprite.style.backgroundPosition = getSpritePosition(DIRECTION_FRAMES.center);
     scrub.frameId = window.requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('mouseleave', handlePointerLeave);
       window.cancelAnimationFrame(scrub.frameId);
     };
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-background">
+    <section className="relative h-screen h-[100svh] w-full overflow-hidden bg-background">
       <video
-        className="absolute inset-0 h-full w-full object-cover object-[8%_50%] md:object-left"
+        ref={backgroundVideoRef}
+        className="absolute inset-0 h-full w-full object-cover object-[24%_50%] sm:object-[8%_50%] md:object-left"
         src={BACKGROUND_VIDEO_URL}
+        poster={BACKGROUND_POSTER_URL}
         muted
         playsInline
         preload="auto"
         autoPlay
         loop
+        aria-hidden="true"
       />
 
       <div
-        className="pointer-events-none absolute bottom-[6vh] -left-[12vw] z-[1] aspect-[29/27] w-[92vw] max-w-[560px] md:bottom-[5vh] md:left-[3vw] md:w-[40vw] lg:bottom-[4vh] lg:w-[34vw] xl:w-[32vw]"
+        className="pointer-events-none absolute bottom-[24svh] -left-[10vw] z-[1] aspect-[29/27] w-[82vw] max-w-[390px] sm:bottom-[6vh] sm:-left-[12vw] sm:w-[92vw] sm:max-w-[560px] md:bottom-[5vh] md:left-[3vw] md:w-[40vw] lg:bottom-[4vh] lg:w-[34vw] xl:w-[32vw]"
       >
         <div
           ref={rabbitSpriteRef}
@@ -268,16 +336,16 @@ function App() {
       <Navbar />
 
       <div className="relative z-10 flex h-full flex-col">
-        <div className="flex flex-1 items-end justify-center px-5 pb-14 sm:pb-16 md:pb-20 lg:pb-24">
+        <div className="flex flex-1 items-end justify-center px-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] sm:px-5 sm:pb-16 md:pb-20 lg:pb-24">
           <div className="w-full max-w-[920px] text-center">
-            <h1 className="-rotate-2 transform-gpu font-brush text-[62px] uppercase leading-[0.82] text-white [text-shadow:0_6px_18px_rgba(0,0,0,0.55)] sm:text-[92px] md:text-[122px] lg:text-[150px]">
+            <h1 className="-rotate-2 transform-gpu font-brush text-[54px] uppercase leading-[0.86] text-white [text-shadow:0_6px_18px_rgba(0,0,0,0.55)] sm:text-[92px] sm:leading-[0.82] md:text-[122px] lg:text-[150px]">
               Dreams
               <br />
               In Motion
             </h1>
-            <div className="mt-3 flex items-center justify-center gap-4 sm:mt-4 md:gap-6">
-              <span className="h-1 w-14 rounded-full bg-[#F4DA25] shadow-[0_0_12px_rgba(244,218,37,0.45)] sm:w-24 md:w-28" />
-              <p className="text-[18px] font-extrabold uppercase tracking-[0.18em] text-[#FFF3AF] [text-shadow:0_3px_12px_rgba(0,0,0,0.65)] sm:text-[24px] md:text-[30px]">
+            <div className="mt-3 flex items-center justify-center gap-3 sm:mt-4 sm:gap-4 md:gap-6">
+              <span className="h-1 w-11 rounded-full bg-[#F4DA25] shadow-[0_0_12px_rgba(244,218,37,0.45)] sm:w-24 md:w-28" />
+              <p className="text-[15px] font-extrabold uppercase tracking-[0.14em] text-[#FFF3AF] [text-shadow:0_3px_12px_rgba(0,0,0,0.65)] sm:text-[24px] sm:tracking-[0.18em] md:text-[30px]">
                 Tokyo AI Visuals
               </p>
             </div>
