@@ -1,8 +1,10 @@
 import { Menu, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-const BACKGROUND_VIDEO_URL = '/bg-no-rabbit.mp4';
-const RABBIT_SPRITE_URL = '/rabbit-eye-sprite.png?v=30fps-continuous-04-3';
+const ASSET_BASE_URL = import.meta.env.BASE_URL;
+const BACKGROUND_VIDEO_URL = `${ASSET_BASE_URL}bg-no-rabbit.mp4`;
+const LOGO_URL = `${ASSET_BASE_URL}logo500.png`;
+const RABBIT_SPRITE_URL = `${ASSET_BASE_URL}rabbit-eye-sprite.png?v=30fps-continuous-04-3`;
 
 const SPRITE_COLS = 20;
 const SPRITE_ROWS = 15;
@@ -119,7 +121,7 @@ function Navbar() {
     <>
       <nav className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-5 py-4 sm:px-8 sm:py-5">
         <a href="#" aria-label="KanaWorks_AI home" className="inline-flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
-          <img src="/logo500.png" alt="KanaWorks_AI" className="h-full w-full object-contain" draggable={false} />
+          <img src={LOGO_URL} alt="KanaWorks_AI" className="h-full w-full object-contain" draggable={false} />
         </a>
 
         <div className="absolute left-1/2 hidden -translate-x-1/2 rounded-full bg-gray-900 px-2 py-1.5 md:flex">
