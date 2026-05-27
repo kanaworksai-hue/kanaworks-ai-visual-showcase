@@ -317,7 +317,7 @@ function App() {
       />
 
       <div
-        className="pointer-events-none absolute bottom-[24svh] -left-[10vw] z-[1] aspect-[29/27] w-[82vw] max-w-[390px] sm:bottom-[6vh] sm:-left-[12vw] sm:w-[92vw] sm:max-w-[560px] md:bottom-[5vh] md:left-[3vw] md:w-[40vw] lg:bottom-[4vh] lg:w-[34vw] xl:w-[32vw]"
+        className="pointer-events-none absolute bottom-[17svh] -left-[12vw] z-[1] aspect-[29/27] w-[70vw] max-w-[320px] sm:bottom-[6vh] sm:-left-[12vw] sm:w-[92vw] sm:max-w-[560px] md:bottom-[5vh] md:left-[3vw] md:w-[40vw] lg:bottom-[4vh] lg:w-[34vw] xl:w-[32vw]"
       >
         <div
           ref={rabbitSpriteRef}
