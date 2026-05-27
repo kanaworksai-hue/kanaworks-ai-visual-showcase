@@ -317,12 +317,13 @@ function App() {
       />
 
       <div
-        className="pointer-events-none absolute bottom-[17svh] -left-[12vw] z-[1] aspect-[29/27] w-[70vw] max-w-[320px] sm:bottom-[6vh] sm:-left-[12vw] sm:w-[92vw] sm:max-w-[560px] md:bottom-[5vh] md:left-[3vw] md:w-[40vw] lg:bottom-[4vh] lg:w-[34vw] xl:w-[32vw]"
+        className="pointer-events-none absolute bottom-[7svh] -left-[12vw] z-[1] aspect-[29/27] w-[70vw] max-w-[320px] sm:bottom-[6vh] sm:-left-[12vw] sm:w-[92vw] sm:max-w-[560px] md:bottom-[5vh] md:left-[3vw] md:w-[40vw] lg:bottom-[4vh] lg:w-[34vw] xl:w-[32vw]"
       >
+        <div className="absolute bottom-[17%] left-[22%] z-0 h-[7%] w-[46%] rounded-full bg-black/35 blur-[10px] md:hidden" />
         <div
           ref={rabbitSpriteRef}
           data-rabbit-sprite
-          className="h-full w-full bg-no-repeat will-change-[background-position]"
+          className="relative z-10 h-full w-full bg-no-repeat will-change-[background-position]"
           style={{
             backgroundImage: `url(${RABBIT_SPRITE_URL})`,
             backgroundPosition: getSpritePosition(DIRECTION_FRAMES.center),
