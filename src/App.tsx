@@ -2,8 +2,8 @@ import { Menu, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const ASSET_BASE_URL = import.meta.env.BASE_URL;
-const BACKGROUND_VIDEO_URL = `${ASSET_BASE_URL}bg-no-rabbit.mp4?v=20260528-higgsfield`;
-const BACKGROUND_POSTER_URL = `${ASSET_BASE_URL}bg-poster.jpg?v=20260528-higgsfield`;
+const BACKGROUND_VIDEO_URL = `${ASSET_BASE_URL}bg-no-rabbit.mp4?v=20260528-loopfix`;
+const BACKGROUND_POSTER_URL = `${ASSET_BASE_URL}bg-poster.jpg?v=20260528-loopfix`;
 const LOGO_URL = `${ASSET_BASE_URL}logo500.png`;
 const RABBIT_SPRITE_URL = `${ASSET_BASE_URL}rabbit-eye-sprite.png?v=30fps-continuous-04-3`;
 
@@ -317,9 +317,9 @@ function App() {
       />
 
       <div
-        className="pointer-events-none absolute bottom-[7svh] -left-[12vw] z-[1] aspect-[29/27] w-[70vw] max-w-[320px] sm:bottom-[6vh] sm:-left-[12vw] sm:w-[92vw] sm:max-w-[560px] md:bottom-[5vh] md:left-[3vw] md:w-[40vw] lg:bottom-[4vh] lg:w-[34vw] xl:w-[32vw]"
+        className="pointer-events-none absolute bottom-[3svh] -left-[12vw] z-[1] aspect-[29/27] w-[70vw] max-w-[320px] sm:bottom-[2vh] sm:-left-[12vw] sm:w-[92vw] sm:max-w-[560px] md:bottom-[-1vh] md:left-[2vw] md:w-[40vw] lg:bottom-[-2vh] lg:w-[34vw] xl:w-[32vw]"
       >
-        <div className="absolute bottom-[17%] left-[22%] z-0 h-[7%] w-[46%] rounded-full bg-black/35 blur-[10px] md:hidden" />
+        <div className="absolute bottom-[14%] left-[18%] z-0 h-[8%] w-[54%] rounded-full bg-black/35 opacity-75 blur-[12px] md:blur-[16px]" />
         <div
           ref={rabbitSpriteRef}
           data-rabbit-sprite
