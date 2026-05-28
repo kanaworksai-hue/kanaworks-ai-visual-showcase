@@ -2,8 +2,8 @@ import { Menu, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const ASSET_BASE_URL = import.meta.env.BASE_URL;
-const BACKGROUND_VIDEO_URL = `${ASSET_BASE_URL}bg-no-rabbit.mp4`;
-const BACKGROUND_POSTER_URL = `${ASSET_BASE_URL}bg-poster.jpg`;
+const BACKGROUND_VIDEO_URL = `${ASSET_BASE_URL}bg-no-rabbit.mp4?v=20260528-higgsfield`;
+const BACKGROUND_POSTER_URL = `${ASSET_BASE_URL}bg-poster.jpg?v=20260528-higgsfield`;
 const LOGO_URL = `${ASSET_BASE_URL}logo500.png`;
 const RABBIT_SPRITE_URL = `${ASSET_BASE_URL}rabbit-eye-sprite.png?v=30fps-continuous-04-3`;
 
